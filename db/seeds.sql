@@ -30,4 +30,19 @@ VALUES /* HR */
        (015, 'Computer Programmer', 85000.00, 05)
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
-       
+VALUES /* Talent Management */
+       (00001, 'Alexander', 'Young', 001),
+       /* Training and Development */
+       (00002, 'Brandon', 'Alexander', 002),
+       (00003, 'Walter', 'Anderson', 002, 00002),
+       /* Workplace Safety */
+       (00004, 'Walter', 'Stabb', 003),
+       (00005, 'Alex', 'Castro', 003, 00004),
+       (00006, 'Sophie', 'Loyal', 004, 00004),
+
+       /* Chief Financial Officer */
+       (00007, 'Eugine', 'Krabs', 004),
+       /* Director of Accounting */
+       (00008, 'Sheldon', 'Cooper', 005, 00007),
+       /* Budgeting */
+       (00009, 'Drew', 'Pickles', 006, 00007),
