@@ -89,6 +89,7 @@ function init() {
             switch (data.options) {
                 case 'view all departments':
                     //console.log(data.options);
+
                     break;
                 case 'view all roles':
                     //console.log(data.options);
@@ -98,6 +99,10 @@ function init() {
                     break;
                 case 'add a department':
                     //console.log(data.options);
+                    inquirer.prompt(
+                        addDepartment
+                        )
+                        .then ((data) => {});
                     break;
                 case 'add a role':
                     //console.log(data.options);
