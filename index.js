@@ -60,6 +60,24 @@ const addRole = [
     }
 ];
 
+const updateEmployee = [
+    {
+        type: 'input',
+        message: 'What is the id of the employee?',
+        name: 'id'
+    },
+    {
+        type: 'input',
+        message: 'What department will the employee be working at?',
+        name: 'department'
+    },
+    {
+        type: 'input',
+        message: 'What role will the employee do?',
+        name: 'role'
+    }
+];
+
 function init() {
     inquirer.prompt(
         mainInput
@@ -99,6 +117,10 @@ function init() {
                     break;
                 case 'update an employee role':
                     //console.log(data.options);
+                    inquirer.prompt(
+                        updateEmployee
+                        )
+                        .then ((data) => {});
                     break;
             }
         });
