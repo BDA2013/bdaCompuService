@@ -1,6 +1,17 @@
 const inquirer = require('inquirer');
-//const mysql = require('mysql2');
+const mysql = require('mysql2');
 
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      // MySQL username,
+      user: 'root',
+      // MySQL password
+      password: '',
+      database: 'compuService_db'
+    },
+    console.log(`Connected to the CompuService database.`)
+  );
 
 const mainInput = [
     {
@@ -89,13 +100,30 @@ function init() {
             switch (data.options) {
                 case 'view all departments':
                     //console.log(data.options);
-
+                    db.query(`SELECT * FROM departments`, (err, result) => {
+                        if (err) {
+                          console.log(err);
+                        }
+                        console.log(result);
+                      });
                     break;
                 case 'view all roles':
                     //console.log(data.options);
+                    db.query(`SELECT * FROM roles`, (err, result) => {
+                        if (err) {
+                          console.log(err);
+                        }
+                        console.log(result);
+                      });
                     break;
                 case 'view all employees':
                     //console.log(data.options);
+                    db.query(`SELECT * FROM employees`, (err, result) => {
+                        if (err) {
+                          console.log(err);
+                        }
+                        console.log(result);
+                      });
                     break;
                 case 'add a department':
                     //console.log(data.options);

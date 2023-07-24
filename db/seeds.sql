@@ -4,7 +4,7 @@ VALUES (01, 'HR'),
        (03, 'Marketing'),
        (04, 'Sales'),
        (05, 'Customer Service'),
-       (06, 'Information Technology')
+       (06, 'Information Technology');
 
 
 INSERT INTO roles (id, title, salary, department_id)
@@ -27,7 +27,7 @@ VALUES /* HR */
        /* Information Technology */
        (013, 'Chief of IT', 90000.00, 05),
        (014, 'Web Developer', 85000.00, 05),
-       (015, 'Computer Programmer', 85000.00, 05)
+       (015, 'Computer Programmer', 85000.00, 05);
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES /* Talent Management */
@@ -66,4 +66,4 @@ VALUES /* Talent Management */
        /* Web Developer */
        (00017, 'Kendra', 'Matthew', 014, 00016),
        /* Computer Programmer */
-       (00018, 'Andrew', 'Wright', 015, 00016)
+       (00018, 'Andrew', 'Wright', 015, 00016);
