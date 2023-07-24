@@ -4,7 +4,7 @@ CREATE DATABASE compuService_db;
 USE compuService_db;
 
 CREATE TABLE department (
-  id INT NOT NULL,
+  id INT NOT NULL PRIMARY KEY,
   name VARCHAR(30)
 );
 
@@ -15,6 +15,7 @@ CREATE TABLE roles (
   department_id INT,
   FOREIGN KEY (department_id)
   REFERENCES department(id)
+  ON DELETE SET NULL
 );
 
 CREATE TABLE employee (

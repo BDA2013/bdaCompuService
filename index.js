@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
-const mysql = require('mysql2');
+//const mysql = require('mysql2');
+
 
 const mainInput = [
     {
@@ -97,10 +98,6 @@ function init() {
                     break;
                 case 'add a department':
                     //console.log(data.options);
-                    inquirer.prompt(
-                        addDepartment
-                        )
-                        .then ((data) => {});
                     break;
                 case 'add a role':
                     //console.log(data.options);
