@@ -182,7 +182,7 @@ function init() {
                     init();
                     break;
 
-                case 'exit':
+                default:
                     inquirer.prompt(exit)
                         .then((data) => {
                             if (data.exit === 'yes') {
@@ -191,8 +191,6 @@ function init() {
                         }
                         );
                     db.end();
-                    break;
-
             }
         });
 }
