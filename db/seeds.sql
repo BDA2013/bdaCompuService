@@ -31,38 +31,38 @@ VALUES /* HR */
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES /* Talent Management */
-       (00001, 'Alexander', 'Young', 001),
+       (00001, 'Alexander', 'Young', 001, NULL),
        /* Training and Development */
-       (00002, 'Brandon', 'Alexander', 002),
+       (00002, 'Brandon', 'Alexander', 002, NULL),
        (00003, 'Walter', 'Anderson', 002, 00002),
        /* Workplace Safety */
-       (00004, 'Walter', 'Stabb', 003),
+       (00004, 'Walter', 'Stabb', 003, NULL),
        (00005, 'Alex', 'Castro', 003, 00004),
        (00006, 'Sophie', 'Loyal', 004, 00004),
 
        /* Chief Financial Officer */
-       (00007, 'Eugine', 'Krabs', 004),
+       (00007, 'Eugine', 'Krabs', 004, NULL),
        /* Director of Accounting */
        (00008, 'Sheldon', 'Cooper', 005, 00007),
        /* Budgeting */
        (00009, 'Drew', 'Pickles', 006, 00008),
 
        /* Chief Marketing Officer */
-       (00010, 'Alvin', 'Bridge', 007),
+       (00010, 'Alvin', 'Bridge', 007, NULL),
        /* Director of Marketing */
        (00011, 'Stewie', 'Griffin', 008, 00010),
        /* Marketing and Promotional Manager */
        (00012, 'Steve', 'Jobs', 009, 00011),
 
        /* Director of Sales */
-       (00013, 'Ivo', 'Eggman', 010),
+       (00013, 'Ivo', 'Eggman', 010, NULL),
        /* Sales of Management */
        (00014, 'Jenny', 'Nate', 011, 00013),
        /* Sales Representative */
        (00015, 'Bob', 'Sanders', 012, 00014),
 
        /* Chief of IT */
-       (00016, 'Christopher', 'Alexander', 013),
+       (00016, 'Christopher', 'Alexander', 013, NULL),
        /* Web Developer */
        (00017, 'Kendra', 'Matthew', 014, 00016),
        /* Computer Programmer */

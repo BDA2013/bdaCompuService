@@ -100,7 +100,7 @@ function init() {
             switch (data.options) {
                 case 'view all departments':
                     //console.log(data.options);
-                    db.query(`SELECT * FROM departments`, (err, result) => {
+                    db.query(`SELECT * FROM compuService_db.department`, (err, result) => {
                         if (err) {
                           console.log(err);
                         }
@@ -109,7 +109,7 @@ function init() {
                     break;
                 case 'view all roles':
                     //console.log(data.options);
-                    db.query(`SELECT * FROM roles`, (err, result) => {
+                    db.query(`SELECT * FROM compuService_db.roles`, (err, result) => {
                         if (err) {
                           console.log(err);
                         }
@@ -118,7 +118,7 @@ function init() {
                     break;
                 case 'view all employees':
                     //console.log(data.options);
-                    db.query(`SELECT * FROM employees`, (err, result) => {
+                    db.query(`SELECT * FROM compuService_db.employees`, (err, result) => {
                         if (err) {
                           console.log(err);
                         }
@@ -130,28 +130,56 @@ function init() {
                     inquirer.prompt(
                         addDepartment
                         )
-                        .then ((data) => {});
+                        .then ((data) => {
+                            db.query(`INSERT INTO compuService_db.department (name) VALUES (?)`, data.departmentName, (err, result) => {
+                                if (err) {
+                                  console.log(err);
+                                }
+                                console.log(result);
+                              });
+                        });
                     break;
                 case 'add a role':
                     //console.log(data.options);
                     inquirer.prompt(
                         addRole
                         )
-                        .then ((data) => {});
+                        .then ((data) => {
+                            db.query(`INSERT INTO compuService_db.roles (title, salary, department_id) VALUES (?, ?, ?)`, [data.roleName, data.salary, data.departmentName], (err, result) => {
+                                if (err) {
+                                  console.log(err);
+                                }
+                                console.log(result);
+                              });
+                        });
                     break;
                 case 'add an employee':
                     //console.log(data.options);
                     inquirer.prompt(
                         addEmployee
                         )
-                        .then ((data) => {});
+                        .then ((data) => {
+                            db.query(`INSERT INTO compuService_db.employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data.employeeFirst, data.employeelast, data.role, data.department], (err, result) => {
+                                if (err) {
+                                  console.log(err);
+                                }
+                                console.log(result);
+                              });
+                        });
                     break;
                 case 'update an employee role':
                     //console.log(data.options);
                     inquirer.prompt(
                         updateEmployee
                         )
-                        .then ((data) => {});
+                        .then ((data) => {
+                            db.query(`UPDATE compuService_db.employees SET role_id = ?, manager_id = ? WHERE id = ?`, [data.role, data.department, data.id], (err, result) => {
+                                if (err) {
+                                  console.log(err);
+                                }
+                                console.log(result);
+                              });
+                        });
                     break;
             }
         });
