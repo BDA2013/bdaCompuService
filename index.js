@@ -125,7 +125,7 @@ function init() {
                     init();
                     break;
                 case 'view all employees':
-                    db.query(`SELECT * FROM compuService_db.employees`, (err, result) => {
+                    db.query(`SELECT * FROM compuService_db.employee`, (err, result) => {
                         if (err) {
                             console.log(err);
                         }
@@ -160,7 +160,7 @@ function init() {
                 case 'add an employee':
                     inquirer.prompt(addEmployee)
                         .then((data) => {
-                            db.query(`INSERT INTO compuService_db.employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data.employeeFirst, data.employeelast, data.role, data.department], (err, result) => {
+                            db.query(`INSERT INTO compuService_db.employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data.employeeFirst, data.employeelast, data.role, data.department], (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 }
@@ -172,7 +172,7 @@ function init() {
                 case 'update an employee role':
                     inquirer.prompt(updateEmployee)
                         .then((data) => {
-                            db.query(`UPDATE compuService_db.employees SET role_id = ?, manager_id = ? WHERE id = ?`, [data.role, data.department, data.id], (err, result) => {
+                            db.query(`UPDATE compuService_db.employee SET role_id = ?, manager_id = ? WHERE id = ?`, [data.role, data.department, data.id], (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 }
