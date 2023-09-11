@@ -68,9 +68,15 @@ const addRole = [
         name: 'salary'
     },
     {
-        type: 'input',
-        message: 'Which department will the role be added to?',
-        name: 'departmentName'
+        type: 'list',
+        message: 'What department does the role belong in?',
+        name: 'departmentName',
+        choices: db.query(`SELECT * FROM compuService_db.department`, (err, result) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(result);
+        })
     }
 ];
 
@@ -181,8 +187,7 @@ function init() {
                         });
                     init();
                     break;
-
-                default:
+                case 'exit':
                     inquirer.prompt(exit)
                         .then((data) => {
                             if (data.exit === 'yes') {

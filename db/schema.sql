@@ -4,7 +4,7 @@ CREATE DATABASE compuService_db;
 USE compuService_db;
 
 CREATE TABLE department (
-  id INT NOT NULL PRIMARY KEY,
+  id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   name VARCHAR(30)
 );
 
