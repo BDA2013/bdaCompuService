@@ -186,72 +186,16 @@ function init() {
                     inquirer.prompt(exit)
                         .then((data) => {
                             if (data.exit === 'yes') {
-                                return;
+                                console.log('Goodbye');
+                                process.exit();
+                            } else {
+                                init();
                             }
                         }
                         );
-                    db.end();
             }
         });
 }
-
-//                 inquirer.prompt(
-//                     addDepartment
-//                     )
-//                     .then ((data) => {
-//                         db.query(`INSERT INTO compuService_db.department (name) VALUES (?)`, data.departmentName, (err, result) => {
-//                             if (err) {
-//                               console.log(err);
-//                             }
-//                             console.log(result);
-//                           });
-//                     });
-//                 break;
-//             case 'add a role':
-//                 //console.log(data.options);
-//                 inquirer.prompt(
-//                     addRole
-//                     )
-//                     .then ((data) => {
-//                         db.query(`INSERT INTO compuService_db.roles (title, salary, department_id) VALUES (?, ?, ?)`, [data.roleName, data.salary, data.departmentName], (err, result) => {
-//                             if (err) {
-//                               console.log(err);
-//                             }
-//                             console.log(result);
-//                           });
-//                     });
-//                 break;
-//             case 'add an employee':
-//                 //console.log(data.options);
-//                 inquirer.prompt(
-//                     addEmployee
-//                     )
-//                     .then ((data) => {
-//                         db.query(`INSERT INTO compuService_db.employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data.employeeFirst, data.employeelast, data.role, data.department], (err, result) => {
-//                             if (err) {
-//                               console.log(err);
-//                             }
-//                             console.log(result);
-//                           });
-//                     });
-//                 break;
-//             case 'update an employee role':
-//                 //console.log(data.options);
-//                 inquirer.prompt(
-//                     updateEmployee
-//                     )
-//                     .then ((data) => {
-//                         db.query(`UPDATE compuService_db.employees SET role_id = ?, manager_id = ? WHERE id = ?`, [data.role, data.department, data.id], (err, result) => {
-//                             if (err) {
-//                               console.log(err);
-//                             }
-//                             console.log(result);
-//                           });
-//                     });
-//                 break;
-//         }
-//     });
-// }
 
 init()
 
