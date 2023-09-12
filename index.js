@@ -13,6 +13,13 @@ const db = mysql.createConnection(
     console.log(`Connected to the CompuService database.`)
 );
 
+let department = [
+    'Sales',
+    'Engineering',
+    'Finance',
+    'Legal'
+];
+
 const mainInput = [
     {
         type: 'list',
@@ -71,12 +78,7 @@ const addRole = [
         type: 'list',
         message: 'What department does the role belong in?',
         name: 'departmentName',
-        choices: db.query(`SELECT * FROM compuService_db.department`, (err, result) => {
-            if (err) {
-                console.log(err);
-            }
-            console.log(result);
-        })
+        choices: department
     }
 ];
 
@@ -116,11 +118,11 @@ function init() {
                     db.query(`SELECT * FROM compuService_db.department`, (err, result) => {
                         if (err) {
                             console.log(err);
-                        }
+                        } else {
                         console.log(result);
-                        init();
+                        }
                     });
-                    break;
+                    init();
                 case 'view all roles':
                     db.query(`SELECT * FROM compuService_db.roles`, (err, result) => {
                         if (err) {
@@ -129,7 +131,6 @@ function init() {
                         console.log(result);
                     });
                     init();
-                    break;
                 case 'view all employees':
                     db.query(`SELECT * FROM compuService_db.employee`, (err, result) => {
                         if (err) {
@@ -138,7 +139,6 @@ function init() {
                         console.log(result);
                     });
                     init();
-                    break;
                 case 'add a department':
                     inquirer.prompt(addDepartment)
                         .then((data) => {
@@ -147,10 +147,10 @@ function init() {
                                     console.log(err);
                                 }
                                 console.log(result);
+                                addDepartment.push(data.departmentName);
                             });
                         });
                     init();
-                    break;
                 case 'add a role':
                     inquirer.prompt(addRole)
                         .then((data) => {
@@ -162,7 +162,6 @@ function init() {
                             });
                         });
                     init();
-                    break;
                 case 'add an employee':
                     inquirer.prompt(addEmployee)
                         .then((data) => {
@@ -171,10 +170,10 @@ function init() {
                                     console.log(err);
                                 }
                                 console.log(result);
+                                init();
                             });
-                        });
+                        });      
                     init();
-                    break;
                 case 'update an employee role':
                     inquirer.prompt(updateEmployee)
                         .then((data) => {
@@ -186,20 +185,18 @@ function init() {
                             });
                         });
                     init();
-                    break;
                 case 'exit':
                     inquirer.prompt(exit)
                         .then((data) => {
                             if (data.exit === 'yes') {
                                 console.log('Goodbye');
                                 process.exit();
-                            } else {
-                                init();
-                            }
+                            } 
                         }
                         );
             }
         });
+        
 }
 
 init()
