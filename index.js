@@ -62,12 +62,7 @@ const manager = [
     }
 ];
 
-const position = [
-    {
-        type: 'input',
-        message: 'What department will the employee be working at?',
-        name: 'department'
-    },
+[
     {
         type: 'input',
         message: 'What role will the employee do?',
@@ -198,6 +193,20 @@ function init() {
                     .then((data) => {
                         if(data.manager === 'yes'){
                             let managerId = null;
+                            const department = db.query(`SELECT name FROM department`, (err, departments) => {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            const departmentPosition = [
+                                {
+                                    type: 'list',
+                                    message: 'What department will the employee be working at?',
+                                    name: 'department',
+                                    choices: departments
+                                },
+                            ];
+                            inquirer.prompt(departmentPosition)
+                        });
                         } else {
                             inquirer.prompt(manager)
                         }
