@@ -51,7 +51,7 @@ const addEmployee = [
         name: 'manager',
         choices: ['yes', 'no']
     },
-    
+
 ];
 
 const manager = [
@@ -61,16 +61,6 @@ const manager = [
         name: 'manager'
     }
 ];
-
-[
-    {
-        type: 'input',
-        message: 'What role will the employee do?',
-        name: 'role'
-    }
-];
-
-
 
 const updateEmployee = [
     {
@@ -190,26 +180,65 @@ function init() {
                     break;
                 case 'add an employee':
                     inquirer.prompt(addEmployee)
-                    .then((data) => {
-                        if(data.manager === 'yes'){
-                            let managerId = null;
-                            const department = db.query(`SELECT name FROM department`, (err, departments) => {
-                                if (err) {
-                                    console.log(err);
-                                }
-                            const departmentPosition = [
-                                {
-                                    type: 'list',
-                                    message: 'What department will the employee be working at?',
-                                    name: 'department',
-                                    choices: departments
-                                },
-                            ];
-                            inquirer.prompt(departmentPosition)
-                        });
-                        } else {
-                            inquirer.prompt(manager)
-                        }
+                        .then((data1) => {
+                            if (data1.manager === 'yes') {
+                                let managerId = null;
+                                db.query(`SELECT name FROM department`, (err, departments) => {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    const departmentPosition = [
+                                        {
+                                            type: 'list',
+                                            message: 'What department will the employee be working at?',
+                                            name: 'department',
+                                            choices: departments
+                                        },
+                                    ];
+                                    inquirer.prompt(departmentPosition)
+                                        .then((data2) => {
+                                            db.query(`SELECT id FROM department WHERE name = ?`, data2.department, (err, id) => {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
+                                                let depId = id[0].id;
+                                                console.log(depId);
+                                                db.query(`SELECT title FROM roles where department_id = ?;`, depId, (err, roleList) => {
+                                                    if (err) {
+                                                        console.log(err);
+                                                    }
+                                                    let roles = roleList.map((role) => role.title);
+                                                    const rolePosition = [
+                                                        {
+                                                            type: 'list',
+                                                            message: 'What role will the employee do?',
+                                                            name: 'role',
+                                                            choices: roles
+                                                        },
+                                                    ];
+                                                    inquirer.prompt(rolePosition)
+                                                        .then((data3) => {
+                                                            db.query(`SELECT id FROM roles WHERE title = ?`, (data3), (err, role) => {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                }
+                                                                let roleId = role[1];
+                                                                db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data1.employeeFirst, data1.employeeLast, roleId, managerId], (err, result) => {
+                                                                    if (err) {
+                                                                        console.log(err);
+                                                                    }
+                                                                    console.log(result);
+                                                                });
+                                                            });
+                                                        });
+                                                });
+                                            });
+                                        });
+                                });
+                            } else {
+                                inquirer.prompt(manager)
+                            }
+
                         });
                     break;
                 case 'update an employee role':
