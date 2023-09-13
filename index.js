@@ -98,7 +98,7 @@ function init() {
                         if (err) {
                             console.log(err);
                         } else {
-                        console.table(result);
+                            console.table(result);
                         }
                         init();
                     });
@@ -135,10 +135,10 @@ function init() {
                         });
                     break;
                 case 'add a role':
-                     db.query(`SELECT name FROM department`, (err, departments) => {
+                    db.query(`SELECT name FROM department`, (err, departments) => {
                         if (err) {
                             console.log(err);
-                        } 
+                        }
                         const addRole = [
                             {
                                 type: 'input',
@@ -157,17 +157,23 @@ function init() {
                                 choices: departments
                             }
                         ];
-                    inquirer.prompt(addRole)
-                        .then((data) => {
-                            db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, [data.roleName, data.salary, data.departmentName], (err, result) => {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                console.log(result);
+                        inquirer.prompt(addRole)
+                            .then((data) => {
+                                db.query(`SELECT id FROM department WHERE name = ?`, data.departmentName, (err, result) => {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    let departmentId = result[0].id;
+                                    db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, [data.roleName, data.salary, departmentId], (err, result) => {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                        console.log(result);
+                                    });
+                                    init();
+                                });
                             });
-                            init();
-                        });
-                    })
+                    });
                     break;
                 case 'add an employee':
                     inquirer.prompt(addEmployee)
@@ -179,7 +185,7 @@ function init() {
                                 console.log(result);
                             });
                             init();
-                        });      
+                        });
                     break;
                 case 'update an employee role':
                     inquirer.prompt(updateEmployee)
@@ -206,7 +212,7 @@ function init() {
                     break;
             }
         });
-        
+
 }
 
 init()
