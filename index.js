@@ -46,6 +46,24 @@ const addEmployee = [
         name: 'employeelast'
     },
     {
+        type: 'list',
+        message: 'Is the employee a manager?',
+        name: 'manager',
+        choices: ['yes', 'no']
+    },
+    
+];
+
+const manager = [
+    {
+        type: 'input',
+        message: 'Who is the manager of the employee?',
+        name: 'manager'
+    }
+];
+
+const position = [
+    {
         type: 'input',
         message: 'What department will the employee be working at?',
         name: 'department'
@@ -177,14 +195,12 @@ function init() {
                     break;
                 case 'add an employee':
                     inquirer.prompt(addEmployee)
-                        .then((data) => {
-                            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data.employeeFirst, data.employeelast, data.role, data.department], (err, result) => {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                console.log(result);
-                            });
-                            init();
+                    .then((data) => {
+                        if(data.manager === 'yes'){
+                            managerId = null;
+                        } else {
+                            inquirer.prompt(manager)
+                        }
                         });
                     break;
                 case 'update an employee role':
