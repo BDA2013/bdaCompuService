@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 const db = mysql.createConnection(
     {
@@ -12,13 +13,6 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to the CompuService database.`)
 );
-
-let department = [
-    'Sales',
-    'Engineering',
-    'Finance',
-    'Legal'
-];
 
 const mainInput = [
     {
@@ -63,24 +57,7 @@ const addEmployee = [
     }
 ];
 
-const addRole = [
-    {
-        type: 'input',
-        message: 'What is the name of the new role?',
-        name: 'roleName'
-    },
-    {
-        type: 'input',
-        message: 'What is the salary of the role?',
-        name: 'salary'
-    },
-    {
-        type: 'list',
-        message: 'What department does the role belong in?',
-        name: 'departmentName',
-        choices: department
-    }
-];
+
 
 const updateEmployee = [
     {
@@ -110,90 +87,123 @@ const exit = [
 ];
 
 
+// console.log(department);
+
 function init() {
     inquirer.prompt(mainInput)
         .then((data) => {
             switch (data.options) {
                 case 'view all departments':
-                    db.query(`SELECT * FROM compuService_db.department`, (err, result) => {
+                    db.query(`SELECT name FROM department`, (err, result) => {
                         if (err) {
                             console.log(err);
                         } else {
-                        console.log(result);
+                        console.table(result);
                         }
+                        init();
                     });
-                    init();
+                    break;
                 case 'view all roles':
-                    db.query(`SELECT * FROM compuService_db.roles`, (err, result) => {
+                    db.query(`SELECT roles.title, roles.salary, department.name FROM roles JOIN department ON roles.department_id = department.id `, (err, result) => {
                         if (err) {
                             console.log(err);
                         }
-                        console.log(result);
+                        console.table(result);
+                        init();
                     });
-                    init();
+                    break;
                 case 'view all employees':
-                    db.query(`SELECT * FROM compuService_db.employee`, (err, result) => {
+                    db.query(`SELECT * FROM employee`, (err, result) => {
                         if (err) {
                             console.log(err);
                         }
-                        console.log(result);
+                        console.table(result);
+                        init();
                     });
-                    init();
+                    break;
                 case 'add a department':
                     inquirer.prompt(addDepartment)
                         .then((data) => {
-                            db.query(`INSERT INTO compuService_db.department (name) VALUES (?)`, data.departmentName, (err, result) => {
+                            db.query(`INSERT INTO department (name) VALUES (?)`, data.departmentName, (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 }
                                 console.log(result);
                                 addDepartment.push(data.departmentName);
                             });
+                            init();
                         });
-                    init();
+                    break;
                 case 'add a role':
+                     db.query(`SELECT name FROM department`, (err, departments) => {
+                        if (err) {
+                            console.log(err);
+                        } 
+                        const addRole = [
+                            {
+                                type: 'input',
+                                message: 'What is the name of the new role?',
+                                name: 'roleName'
+                            },
+                            {
+                                type: 'input',
+                                message: 'What is the salary of the role?',
+                                name: 'salary'
+                            },
+                            {
+                                type: 'list',
+                                message: 'What department does the role belong in?',
+                                name: 'departmentName',
+                                choices: departments
+                            }
+                        ];
                     inquirer.prompt(addRole)
                         .then((data) => {
-                            db.query(`INSERT INTO compuService_db.roles (title, salary, department_id) VALUES (?, ?, ?)`, [data.roleName, data.salary, data.departmentName], (err, result) => {
+                            db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, [data.roleName, data.salary, data.departmentName], (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 }
                                 console.log(result);
                             });
+                            init();
                         });
-                    init();
+                    })
+                    break;
                 case 'add an employee':
                     inquirer.prompt(addEmployee)
                         .then((data) => {
-                            db.query(`INSERT INTO compuService_db.employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data.employeeFirst, data.employeelast, data.role, data.department], (err, result) => {
+                            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [data.employeeFirst, data.employeelast, data.role, data.department], (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 }
                                 console.log(result);
-                                init();
                             });
+                            init();
                         });      
-                    init();
+                    break;
                 case 'update an employee role':
                     inquirer.prompt(updateEmployee)
                         .then((data) => {
-                            db.query(`UPDATE compuService_db.employee SET role_id = ?, manager_id = ? WHERE id = ?`, [data.role, data.department, data.id], (err, result) => {
+                            db.query(`UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?`, [data.role, data.department, data.id], (err, result) => {
                                 if (err) {
                                     console.log(err);
                                 }
                                 console.log(result);
                             });
+                            init();
                         });
-                    init();
+                    break;
                 case 'exit':
                     inquirer.prompt(exit)
                         .then((data) => {
                             if (data.exit === 'yes') {
                                 console.log('Goodbye');
                                 process.exit();
-                            } 
-                        }
-                        );
+                            } else {
+                                init();
+                            }
+                        });
+                    break;
             }
         });
         
