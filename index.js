@@ -197,7 +197,7 @@ function init() {
                     inquirer.prompt(addEmployee)
                     .then((data) => {
                         if(data.manager === 'yes'){
-                            managerId = null;
+                            let managerId = null;
                         } else {
                             inquirer.prompt(manager)
                         }
