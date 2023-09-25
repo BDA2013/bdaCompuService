@@ -99,6 +99,7 @@ const exit = [
 function init() {
   inquirer.prompt(mainInput).then((data) => {
     switch (data.options) {
+      // View all departments
       case "view all departments":
         db.query(`SELECT name FROM department`, (err, result) => {
           if (err) {
@@ -109,6 +110,7 @@ function init() {
           init();
         });
         break;
+      // View all roles
       case "view all roles":
         db.query(
           `SELECT roles.title, roles.salary, department.name FROM roles JOIN department ON roles.department_id = department.id `,
@@ -121,6 +123,7 @@ function init() {
           }
         );
         break;
+      // View all employees
       case "view all employees":
         db.query(`SELECT * FROM employee`, (err, result) => {
           if (err) {
@@ -130,6 +133,7 @@ function init() {
           init();
         });
         break;
+      // Add a department
       case "add a department":
         inquirer.prompt(addDepartment).then((data) => {
           db.query(
@@ -146,6 +150,7 @@ function init() {
           init();
         });
         break;
+      // Add a role
       case "add a role":
         db.query(`SELECT name FROM department`, (err, departments) => {
           if (err) {
@@ -194,6 +199,7 @@ function init() {
           });
         });
         break;
+      // Add an employee
       case "add an employee":
         inquirer.prompt(addEmployee).then((data) => {
           let firstName = data.employeeFirstName;
