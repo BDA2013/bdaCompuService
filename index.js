@@ -49,7 +49,7 @@ const addEmployee = [
   {
     type: "input",
     message: "What is the last name of the employee?",
-    name: "employeelastName",
+    name: "employeeLastName",
   },
   {
     type: "list",
@@ -93,8 +93,6 @@ const exit = [
     choices: ["yes", "no"],
   },
 ];
-
-// console.log(department);
 
 function init() {
   inquirer.prompt(mainInput).then((data) => {
@@ -205,7 +203,7 @@ function init() {
           let firstName = data.employeeFirstName;
           let lastName = data.employeeLastName;
           if (data.manager === "yes") {
-            let managerId = null;
+            let managerId = null; //When null, the employee is a manager
             db.query(`SELECT name FROM department`, (err, departments) => {
               if (err) {
                 console.log(err);
@@ -220,6 +218,7 @@ function init() {
               ];
               inquirer.prompt(departmentPosition).then((data) => {
                 let department = data.department;
+                console.log(department);
                 db.query(
                   `SELECT id FROM department WHERE name = ?`,
                   department,
@@ -246,13 +245,22 @@ function init() {
                         ];
                         inquirer.prompt(rolePosition).then((data) => {
                           let role = data.role;
+                          console.log(role);
                           db.query(
                             `SELECT id FROM roles WHERE title = ?`,
                             role,
-                            (err, roleId) => {
+                            (err, data) => {
+                              let roleId = data[0].id;
+                              console.log(roleId);
                               if (err) {
                                 console.log(err);
                               }
+                              console.log(
+                                firstName,
+                                lastName,
+                                roleId,
+                                managerId
+                              );
                               db.query(
                                 `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
                                 [firstName, lastName, roleId, managerId],
