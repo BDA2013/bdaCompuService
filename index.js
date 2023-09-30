@@ -392,7 +392,7 @@ function init() {
       // Update an employee role
       case "update an employee role":
         // Gather all employees by full name
-        db.query(`SELECT first_name, last_name FROM employee;`, (err, employees) => {
+        db.query(`SELECT * FROM employee;`, (err, employees) => {
           // Map all of the employees into an array
           let employeeList = employees.map((employee) => employee.first_name + " " + employee.last_name);
           // Ask which employee to update
@@ -407,6 +407,16 @@ function init() {
           inquirer.prompt(updateEmployee)
           .then((data) => {
             // console.log(data);
+            let employee = data.employee;
+            // Split the employee name into first and last name
+            let employeeFirstName = employee.split(" ")[0];
+            let employeeLastName = employee.split(" ")[1];
+            // console.log(employeeFirstName, employeeLastName);
+            // Get the manager id of the employee
+            db.query(`SELECT manager_id FROM employee WHERE first_name = ? AND last_name = ?`, [employeeFirstName, employeeLastName], (err, result) => {
+              let managerId = result[0].manager_id;
+              // console.log(managerId);
+            });
             init(); 
           });
         });
