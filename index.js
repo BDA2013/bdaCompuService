@@ -391,18 +391,24 @@ function init() {
         break;
       // Update an employee role
       case "update an employee role":
-        inquirer.prompt(updateEmployee).then((data) => {
-          db.query(
-            `UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?`,
-            [data.role, data.department, data.id],
-            (err, result) => {
-              if (err) {
-                console.log(err);
-              }
-              console.log(result);
-            }
-          );
-          init();
+        // Gather all employees by full name
+        db.query(`SELECT first_name, last_name FROM employee;`, (err, employees) => {
+          // Map all of the employees into an array
+          let employeeList = employees.map((employee) => employee.first_name + " " + employee.last_name);
+          // Ask which employee to update
+          const updateEmployee = [
+            {
+              type: "list",
+              message: "Which employee do you want to update?",
+              name: "employee",
+              choices: employeeList,
+            },
+          ];
+          inquirer.prompt(updateEmployee)
+          .then((data) => {
+            // console.log(data);
+            init(); 
+          });
         });
         break;
       case "exit":
