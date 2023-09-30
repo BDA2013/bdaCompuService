@@ -273,7 +273,12 @@ function init() {
                               );
                               db.query(
                                 `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
-                                [firstName, lastName, employeeRoleID, managerId],
+                                [
+                                  firstName,
+                                  lastName,
+                                  employeeRoleID,
+                                  managerId,
+                                ],
                                 (err) => {
                                   if (err) {
                                     console.log(err);
@@ -367,7 +372,12 @@ function init() {
                                 );
                                 db.query(
                                   `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
-                                  [firstName, lastName, employeeRoleID, managerId],
+                                  [
+                                    firstName,
+                                    lastName,
+                                    employeeRoleID,
+                                    managerId,
+                                  ],
                                   (err) => {
                                     if (err) {
                                       console.log(err);
@@ -394,7 +404,9 @@ function init() {
         // Gather all employees by full name
         db.query(`SELECT * FROM employee;`, (err, employees) => {
           // Map all of the employees into an array
-          let employeeList = employees.map((employee) => employee.first_name + " " + employee.last_name);
+          let employeeList = employees.map(
+            (employee) => employee.first_name + " " + employee.last_name
+          );
           // Ask which employee to update
           const updateEmployee = [
             {
@@ -404,20 +416,32 @@ function init() {
               choices: employeeList,
             },
           ];
-          inquirer.prompt(updateEmployee)
-          .then((data) => {
+          inquirer.prompt(updateEmployee).then((data) => {
             // console.log(data);
             let employee = data.employee;
             // Split the employee name into first and last name
             let employeeFirstName = employee.split(" ")[0];
             let employeeLastName = employee.split(" ")[1];
             // console.log(employeeFirstName, employeeLastName);
-            // Get the manager id of the employee
-            db.query(`SELECT manager_id FROM employee WHERE first_name = ? AND last_name = ?`, [employeeFirstName, employeeLastName], (err, result) => {
-              let managerId = result[0].manager_id;
-              // console.log(managerId);
-            });
-            init(); 
+            //Get the id of the employee
+            db.query(
+              `SELECT id FROM employee WHERE first_name = ? AND last_name = ?`,
+              [employeeFirstName, employeeLastName],
+              (err, result) => {
+                let employeeId = result[0].id;
+                // console.log(employeeId);
+                // Get the manager id of the employee
+                db.query(
+                  `SELECT manager_id FROM employee WHERE first_name = ? AND last_name = ?`,
+                  [employeeFirstName, employeeLastName],
+                  (err, result) => {
+                    let managerId = result[0].manager_id;
+                    // console.log(managerId);
+                  }
+                );
+              }
+            );
+            init();
           });
         });
         break;
