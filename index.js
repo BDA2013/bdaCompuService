@@ -443,6 +443,80 @@ function init() {
                     ], (err, result) => {
                       let roleId = result[0].role_id;
                       // console.log(roleId);
+                      // Give the choice to update the role or the manager status
+                      const updateEmployee = [
+                        {
+                          type: "list",
+                          message: "What do you want to update?",
+                          name: "update",
+                          choices: ["role", "manager"],
+                        },
+                      ];
+                      inquirer.prompt(updateEmployee).then((data) => {
+                        //If the employee wants to change the role
+                        if (data.update === "role") {
+                          // Get all of the roles
+                          db.query(`SELECT title FROM roles`, (err, roles) => {
+                            if (err) {
+                              console.log(err);
+                            } else {
+                              // Map all of the roles into an array
+                              let roleList = roles.map((role) => role.title);
+                              // Ask which role to update to
+                              const updateRole = [
+                                {
+                                  type: "list",
+                                  message: "What role do you want to update to?",
+                                  name: "role",
+                                  choices: roleList,
+                                }
+                              ];
+                              inquirer.prompt(updateRole).then((data) => {
+                                let role = data.role;
+                                // Get the id of the role
+                                db.query(`SELECT id FROM roles WHERE title = ?`, role, (err, result) => {
+                                  let roleId = result[0].id;
+                                  //If the manager_id isn't null, gather the employee's with the manager_id = null
+                                  db.query(`SELECT * FROM employee WHERE manager_id IS NULL`, (err, employees) => {
+                                    // Map all of the employees into an array
+                                    let managerList = employees.map((employee) => employee.first_name + " " + employee.last_name);
+                                    // Ask which one is your manager
+                                    const updateManager = [
+                                      {
+                                        type: "list",
+                                        message: "Who is your manager?",
+                                        name: "manager",
+                                        choices: managerList
+                                      }
+                                    ];
+                                    inquirer.prompt(updateManager).then((data) => {
+                                      let manager = data.manager;
+                                      // Split the manager name into first and last name
+                                      let managerFirstName = manager.split(" ")[0];
+                                      let managerLastName = manager.split(" ")[1];
+                                      // Get the manager id
+                                      db.query(`SELECT id FROM employee WHERE first_name = ? AND last_name = ?`, [managerFirstName, managerLastName], (err, result) => {
+                                        let managerId = result[0].id;
+                                        // Update the employee's role and manager
+                                        db.query(`UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?`, [roleId, managerId, employeeId], (err, result) => {
+                                          if (err) {
+                                            console.log(err);
+                                          }
+                                          console.log("Success!");
+                                          init();
+                                        })
+                                      })
+                                    })
+                                  })
+                                    
+                                })
+                              })
+                            }
+                          })
+                        } else {
+
+                        }
+                      })
                     })
                   }
                 );
