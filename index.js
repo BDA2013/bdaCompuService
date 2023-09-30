@@ -437,6 +437,13 @@ function init() {
                   (err, result) => {
                     let managerId = result[0].manager_id;
                     // console.log(managerId);
+                    // Get the role id of the employee
+                    db.query(`SELECT role_id FROM employee WHERE id = ?`, [
+                      employeeId,
+                    ], (err, result) => {
+                      let roleId = result[0].role_id;
+                      // console.log(roleId);
+                    })
                   }
                 );
               }
