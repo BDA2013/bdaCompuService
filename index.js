@@ -99,8 +99,6 @@ const exit = [
   },
 ];
 
-// console.log(department);
-
 function init() {
   inquirer.prompt(mainInput).then((data) => {
     switch (data.options) {
@@ -214,7 +212,7 @@ function init() {
           let employeeRoleID;
 
           if (data.manager === "yes") {
-            let managerId = null;
+            let managerId = null; //When null, the employee is a manager
             db.query(`SELECT name FROM department`, (err, departments) => {
               if (err) {
                 console.log(err);
@@ -229,6 +227,7 @@ function init() {
               ];
               inquirer.prompt(departmentPosition).then((data) => {
                 let department = data.department;
+                console.log(department);
                 db.query(
                   `SELECT id FROM department WHERE name = ?`,
                   department,
@@ -255,6 +254,7 @@ function init() {
                         ];
                         inquirer.prompt(rolePosition).then((data) => {
                           let role = data.role;
+                          console.log(role);
                           db.query(
                             `SELECT id FROM roles WHERE title = ?`,
                             role,
@@ -268,6 +268,7 @@ function init() {
                                 firstName,
                                 lastName,
                                 employeeRoleID,
+
                                 managerId
                               );
                               db.query(
