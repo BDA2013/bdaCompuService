@@ -62,8 +62,13 @@ const addEmployee = [
 const manager = [
   {
     type: "input",
-    message: "Who is the manager of the employee?",
-    name: "manager",
+    message: "What is the first name of the manager?",
+    name: "managerFirstName",
+  },
+  {
+    type: "input",
+    message: "What is the last name of the manager?",
+    name: "managerLastName",
   },
 ];
 
@@ -154,6 +159,7 @@ function init() {
           if (err) {
             console.log(err);
           }
+          console.log(departments);
           const addRole = [
             {
               type: "input",
@@ -200,8 +206,11 @@ function init() {
       // Add an employee
       case "add an employee":
         inquirer.prompt(addEmployee).then((data) => {
+          // Univeral variables
           let firstName = data.employeeFirstName;
           let lastName = data.employeeLastName;
+          let employeeRoleID;
+
           if (data.manager === "yes") {
             let managerId = null; //When null, the employee is a manager
             db.query(`SELECT name FROM department`, (err, departments) => {
@@ -249,28 +258,29 @@ function init() {
                           db.query(
                             `SELECT id FROM roles WHERE title = ?`,
                             role,
-                            (err, data) => {
-                              let roleId = data[0].id;
+                            (err, roleId) => {
                               console.log(roleId);
                               if (err) {
                                 console.log(err);
                               }
+                              employeeRoleID = roleId[0].id;
                               console.log(
                                 firstName,
                                 lastName,
-                                roleId,
+                                employeeRoleID,
+
                                 managerId
                               );
                               db.query(
                                 `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
-                                [firstName, lastName, roleId, managerId],
-                                (err, result) => {
+                                [firstName, lastName, employeeRoleID, managerId],
+                                (err) => {
                                   if (err) {
                                     console.log(err);
                                   }
-                                  console.log(result);
                                 }
                               );
+                              console.log("Success!");
                               init();
                             }
                           );
@@ -282,10 +292,104 @@ function init() {
               });
             });
           } else {
-            inquirer.prompt(manager);
+            // If the employee is not a manager
+            //Ask for what department the employee will be working at
+            let managerId;
+
+            db.query(`SELECT name FROM department`, (err, departments) => {
+              if (err) {
+                console.log(err);
+              }
+              const departmentPosition = [
+                {
+                  type: "list",
+                  message: "What department will the employee be working at?",
+                  name: "department",
+                  choices: departments,
+                },
+              ];
+              inquirer.prompt(departmentPosition).then((data) => {
+                let department = data.department;
+                db.query(
+                  `SELECT id FROM department WHERE name = ?`,
+                  department,
+                  (err, id) => {
+                    if (err) {
+                      console.log(err);
+                    }
+                    let depId = id[0].id;
+                    db.query(
+                      `SELECT title FROM roles where department_id = ?;`,
+                      depId,
+                      (err, roleList) => {
+                        if (err) {
+                          console.log(err);
+                        }
+                        let roles = roleList.map((role) => role.title);
+                        const rolePosition = [
+                          {
+                            type: "list",
+                            message: "What role will the employee do?",
+                            name: "role",
+                            choices: roles,
+                          },
+                        ];
+                        // Ask who the manager of the employee is
+                        inquirer.prompt(manager).then((data) => {
+                          let managerFirstName = data.managerFirstName;
+                          let managerLastName = data.managerLastName;
+                          db.query(
+                            `SELECT id FROM employee WHERE first_name = ? AND last_name = ?`,
+                            [managerFirstName, managerLastName],
+                            (err, result) => {
+                              if (err) {
+                                console.log(err);
+                              }
+                              managerId = result[0].id;
+                            }
+                          );
+                          inquirer.prompt(rolePosition).then((data) => {
+                            let role = data.role;
+                            db.query(
+                              `SELECT id FROM roles WHERE title = ?`,
+                              role,
+                              (err, roleId) => {
+                                console.log(roleId);
+                                if (err) {
+                                  console.log(err);
+                                }
+                                employeeRoleID = roleId[0].id;
+                                console.log(
+                                  firstName,
+                                  lastName,
+                                  employeeRoleID,
+                                  managerId
+                                );
+                                db.query(
+                                  `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
+                                  [firstName, lastName, employeeRoleID, managerId],
+                                  (err) => {
+                                    if (err) {
+                                      console.log(err);
+                                    }
+                                  }
+                                );
+                                console.log("Success!");
+                                init();
+                              }
+                            );
+                          });
+                        });
+                      }
+                    );
+                  }
+                );
+              });
+            });
           }
         });
         break;
+      // Update an employee role
       case "update an employee role":
         inquirer.prompt(updateEmployee).then((data) => {
           db.query(
