@@ -430,99 +430,186 @@ function init() {
               (err, result) => {
                 let employeeId = result[0].id;
                 // console.log(employeeId);
-                // Get the manager id of the employee
-                db.query(
-                  `SELECT manager_id FROM employee WHERE first_name = ? AND last_name = ?`,
-                  [employeeFirstName, employeeLastName],
-                  (err, result) => {
-                    let managerId = result[0].manager_id;
-                    // console.log(managerId);
-                    // Get the role id of the employee
-                    db.query(`SELECT role_id FROM employee WHERE id = ?`, [
-                      employeeId,
-                    ], (err, result) => {
-                      let roleId = result[0].role_id;
-                      // console.log(roleId);
-                      // Give the choice to update the role or the manager status
-                      const updateEmployee = [
-                        {
-                          type: "list",
-                          message: "What do you want to update?",
-                          name: "update",
-                          choices: ["role", "manager"],
-                        },
-                      ];
-                      inquirer.prompt(updateEmployee).then((data) => {
-                        //If the employee wants to change the role
-                        if (data.update === "role") {
-                          // Get all of the roles
-                          db.query(`SELECT title FROM roles`, (err, roles) => {
-                            if (err) {
-                              console.log(err);
-                            } else {
-                              // Map all of the roles into an array
-                              let roleList = roles.map((role) => role.title);
-                              // Ask which role to update to
-                              const updateRole = [
-                                {
-                                  type: "list",
-                                  message: "What role do you want to update to?",
-                                  name: "role",
-                                  choices: roleList,
-                                }
-                              ];
-                              inquirer.prompt(updateRole).then((data) => {
-                                let role = data.role;
-                                // Get the id of the role
-                                db.query(`SELECT id FROM roles WHERE title = ?`, role, (err, result) => {
-                                  let roleId = result[0].id;
-                                  //If the manager_id isn't null, gather the employee's with the manager_id = null
-                                  db.query(`SELECT * FROM employee WHERE manager_id IS NULL`, (err, employees) => {
-                                    // Map all of the employees into an array
-                                    let managerList = employees.map((employee) => employee.first_name + " " + employee.last_name);
-                                    // Ask which one is your manager
-                                    const updateManager = [
-                                      {
-                                        type: "list",
-                                        message: "Who is your manager?",
-                                        name: "manager",
-                                        choices: managerList
-                                      }
-                                    ];
-                                    inquirer.prompt(updateManager).then((data) => {
+                // Get the role id of the employee
+                // Give the choice to update the role or the manager status
+                const updateEmployee = [
+                  {
+                    type: "list",
+                    message: "What do you want to update?",
+                    name: "update",
+                    choices: ["role", "manager"],
+                  }
+                ];
+                inquirer.prompt(updateEmployee).then((data) => {
+                  //If the employee wants to change the role
+                  if (data.update === "role") {
+                    // Get all of the roles
+                    db.query(`SELECT title FROM roles`, (err, roles) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        // Map all of the roles into an array
+                        let roleList = roles.map((role) => role.title);
+                        // Ask which role to update to
+                        const updateRole = [
+                          {
+                            type: "list",
+                            message: "What role do you want to update to?",
+                            name: "role",
+                            choices: roleList,
+                          },
+                        ];
+                        inquirer.prompt(updateRole).then((data) => {
+                          let role = data.role;
+                          // Get the id of the role
+                          db.query(
+                            `SELECT id FROM roles WHERE title = ?`,
+                            role,
+                            (err, result) => {
+                              let roleId = result[0].id;
+                              //If the manager_id isn't null, gather the employee's with the manager_id = null
+                              db.query(
+                                `SELECT * FROM employee WHERE manager_id IS NULL`,
+                                (err, employees) => {
+                                  // Map all of the employees into an array
+                                  let managerList = employees.map(
+                                    (employee) =>
+                                      employee.first_name +
+                                      " " +
+                                      employee.last_name
+                                  );
+                                  // Ask which one is your manager
+                                  const updateManager = [
+                                    {
+                                      type: "list",
+                                      message: "Who is your manager?",
+                                      name: "manager",
+                                      choices: managerList,
+                                    },
+                                  ];
+                                  inquirer
+                                    .prompt(updateManager)
+                                    .then((data) => {
                                       let manager = data.manager;
                                       // Split the manager name into first and last name
-                                      let managerFirstName = manager.split(" ")[0];
-                                      let managerLastName = manager.split(" ")[1];
+                                      let managerFirstName =
+                                        manager.split(" ")[0];
+                                      let managerLastName =
+                                        manager.split(" ")[1];
                                       // Get the manager id
-                                      db.query(`SELECT id FROM employee WHERE first_name = ? AND last_name = ?`, [managerFirstName, managerLastName], (err, result) => {
-                                        let managerId = result[0].id;
-                                        // Update the employee's role and manager
-                                        db.query(`UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?`, [roleId, managerId, employeeId], (err, result) => {
+                                      db.query(
+                                        `SELECT id FROM employee WHERE first_name = ? AND last_name = ?`,
+                                        [managerFirstName, managerLastName],
+                                        (err, result) => {
                                           if (err) {
                                             console.log(err);
                                           }
-                                          console.log("Success!");
-                                          init();
-                                        })
-                                      })
-                                    })
-                                  })
-                                    
-                                })
-                              })
+                                          let managerId = result[0].id;
+                                          // Update the employee's role and manager
+                                          db.query(
+                                            `UPDATE employee SET role_id = ?, manager_id = ? WHERE id = ?`,
+                                            [roleId, managerId, employeeId],
+                                            (err) => {
+                                              if (err) {
+                                                console.log(err);
+                                              }
+                                              console.log("Success!");
+                                              init();
+                                            }
+                                          );
+                                        }
+                                      );
+                                    });
+                                }
+                              );
                             }
-                          })
-                        } else {
-
-                        }
-                      })
-                    })
+                          );
+                        });
+                      }
+                    });
+                  } else {
+                    // If the employee wants to change the manager status
+                    // Is this employee becoming a manager?
+                    const updateManager = [
+                      {
+                        type: "list",
+                        message: "Is this employee becoming a manager?",
+                        name: "manager",
+                        choices: ["yes", "no"],
+                      },
+                    ];
+                    inquirer.prompt(updateManager).then((data) => {
+                      if (data === "yes") {
+                        // If the employee is becoming a manager
+                        // Set the manager_id to null
+                        db.query(
+                          `UPDATE employee SET manager_id = null WHERE id = ?`,
+                          [employeeId],
+                          (err) => {
+                            if (err) {
+                              console.log(err);
+                            }
+                            console.log("Success!");
+                            init();
+                          }
+                        );
+                      } else {
+                        // If the employee is not becoming a manager
+                        // Get all of the employees
+                        db.query(
+                          `SELECT * FROM employee WHERE manager_id IS NULL`,
+                          (err, employees) => {
+                            // Map all of the employees into an array
+                            let managerList = employees.map(
+                              (employee) =>
+                                employee.first_name + " " + employee.last_name
+                            );
+                            // Ask which one is your manager
+                            const updateManager = [
+                              {
+                                type: "list",
+                                message: "Who is your manager?",
+                                name: "manager",
+                                choices: managerList,
+                              },
+                            ];
+                            inquirer.prompt(updateManager).then((data) => {
+                              let manager = data.manager;
+                              // Split the manager name into first and last name
+                              let managerFirstName = manager.split(" ")[0];
+                              let managerLastName = manager.split(" ")[1];
+                              // Get the manager id
+                              db.query(
+                                `SELECT id FROM employee WHERE first_name = ? AND last_name = ?`,
+                                [managerFirstName, managerLastName],
+                                (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  }
+                                  let managerId = result[0].id;
+                                  // Update the employee's manager
+                                  db.query(
+                                    `UPDATE employee SET manager_id = ? WHERE id = ?`,
+                                    [managerId, employeeId],
+                                    (err) => {
+                                      if (err) {
+                                        console.log(err);
+                                      }
+                                      console.log("Success!");
+                                      init();
+                                    }
+                                  );
+                                }
+                              );
+                            });
+                          }
+                        );
+                      }
+                    });
                   }
-                );
+                });
               }
             );
-            init();
           });
         });
         break;
