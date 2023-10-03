@@ -72,24 +72,6 @@ const manager = [
   },
 ];
 
-const updateEmployee = [
-  {
-    type: "input",
-    message: "What is the id of the employee?",
-    name: "id",
-  },
-  {
-    type: "input",
-    message: "What department will the employee be working at?",
-    name: "department",
-  },
-  {
-    type: "input",
-    message: "What role will the employee do?",
-    name: "role",
-  },
-];
-
 const exit = [
   {
     type: "list",
